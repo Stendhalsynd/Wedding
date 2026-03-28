@@ -4,7 +4,7 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { doc, getDoc, setDoc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { auth, db } from './firebase';
 import { handleFirestoreError, OperationType } from './utils/errorHandling';
-import { DEFAULT_PROFILE_IMAGES } from './constants/profileImages';
+import { getResolvedProfileImageUrl, shouldRequireRoleSetup } from './utils/profileRules';
 import Splash from './pages/Splash';
 import Login from './pages/Login';
 import ProfileSetup from './pages/ProfileSetup';
@@ -22,6 +22,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [coupleId, setCoupleId] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [needsRoleSetup, setNeedsRoleSetup] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -40,7 +41,8 @@ export default function App() {
               email: currentUser.email || '',
               displayName: currentUser.displayName || '',
               coupleId: null,
-              role: null
+              role: null,
+              roleSetupDismissedAt: null,
             });
           }
 
@@ -49,18 +51,14 @@ export default function App() {
               const data = docSnap.data();
               setCoupleId(data.coupleId || null);
               setUserRole(data.role || null);
+              setNeedsRoleSetup(shouldRequireRoleSetup(data));
               
-              // Migration: If user has a role but is using the old picsum URL or broken DiceBear URL, update to the new default
-              const isOldUrl = data.profileImageUrl?.includes('picsum.photos') || 
-                               data.profileImageUrl?.includes('dicebear.com/7.x') ||
-                               data.profileImageUrl?.includes('fun-emoji') ||
-                               data.profileImageUrl?.includes('adventurer') ||
-                               data.profileImageUrl?.includes('avataaars');
-              if (data.role && (isOldUrl || !data.profileImageUrl)) {
-                const newProfileUrl = DEFAULT_PROFILE_IMAGES[data.role as 'bride' | 'groom'];
-                if (newProfileUrl && data.profileImageUrl !== newProfileUrl) {
-                  await updateDoc(userRef, { profileImageUrl: newProfileUrl });
-                }
+              const resolvedProfileImageUrl = getResolvedProfileImageUrl({
+                role: data.role,
+                profileImageUrl: data.profileImageUrl,
+              });
+              if (resolvedProfileImageUrl && data.profileImageUrl !== resolvedProfileImageUrl) {
+                await updateDoc(userRef, { profileImageUrl: resolvedProfileImageUrl });
               }
             }
             setLoading(false);
@@ -75,6 +73,7 @@ export default function App() {
       } else {
         setCoupleId(null);
         setUserRole(null);
+        setNeedsRoleSetup(false);
         setLoading(false);
         if (unsubscribeUserDoc) unsubscribeUserDoc();
       }
@@ -123,7 +122,7 @@ export default function App() {
             path="/hall/:id" 
             element={
               !user ? <Navigate to="/login" replace /> : 
-              !userRole ? <Navigate to="/profile-setup" replace /> :
+              needsRoleSetup ? <Navigate to="/profile-setup" replace /> :
               <HallDetail user={user} coupleId={coupleId || user.uid} isConnected={!!coupleId} />
             } 
           />
@@ -131,7 +130,7 @@ export default function App() {
             path="/hall/:id/preview" 
             element={
               !user ? <Navigate to="/login" replace /> : 
-              !userRole ? <Navigate to="/profile-setup" replace /> :
+              needsRoleSetup ? <Navigate to="/profile-setup" replace /> :
               <VirtualPreview />
             } 
           />
@@ -142,7 +141,7 @@ export default function App() {
               path="/" 
               element={
                 !user ? <Navigate to="/splash" replace /> : 
-                !userRole ? <Navigate to="/profile-setup" replace /> :
+                needsRoleSetup ? <Navigate to="/profile-setup" replace /> :
                 <Dashboard user={user} coupleId={coupleId || user.uid} isConnected={!!coupleId} />
               } 
             />
@@ -150,7 +149,7 @@ export default function App() {
               path="/map" 
               element={
                 !user ? <Navigate to="/splash" replace /> : 
-                !userRole ? <Navigate to="/profile-setup" replace /> :
+                needsRoleSetup ? <Navigate to="/profile-setup" replace /> :
                 <MapView />
               } 
             />
@@ -158,7 +157,7 @@ export default function App() {
               path="/compare" 
               element={
                 !user ? <Navigate to="/splash" replace /> : 
-                !userRole ? <Navigate to="/profile-setup" replace /> :
+                needsRoleSetup ? <Navigate to="/profile-setup" replace /> :
                 <CompareView />
               } 
             />

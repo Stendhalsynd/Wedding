@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { doc, updateDoc } from 'firebase/firestore';
+import { deleteField, doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import { DEFAULT_PROFILE_IMAGES } from '../constants/profileImages';
 import { Sparkles, Loader2 } from 'lucide-react';
@@ -14,20 +14,22 @@ export default function ProfileSetup() {
   const handleComplete = async () => {
     if (!user || !role) return;
     setLoading(true);
+    const profileImageUrl = DEFAULT_PROFILE_IMAGES[role];
     try {
-      const profileImageUrl = DEFAULT_PROFILE_IMAGES[role];
       await updateDoc(doc(db, 'users', user.uid), {
         role,
         profileImageUrl,
+        roleSetupDismissedAt: deleteField(),
       });
-      navigate('/');
+      navigate('/', { replace: true });
     } catch (error) {
       console.error("Error setting up profile:", error);
-      // Even if update fails, we should still try to navigate
       await updateDoc(doc(db, 'users', user.uid), {
         role,
+        profileImageUrl,
+        roleSetupDismissedAt: deleteField(),
       });
-      navigate('/');
+      navigate('/', { replace: true });
     } finally {
       setLoading(false);
     }
@@ -35,7 +37,17 @@ export default function ProfileSetup() {
 
   const skipSetup = async () => {
     if (!user) return;
-    navigate('/');
+    setLoading(true);
+    try {
+      await updateDoc(doc(db, 'users', user.uid), {
+        roleSetupDismissedAt: serverTimestamp(),
+      });
+    } catch (error) {
+      console.error("Error skipping profile setup:", error);
+    } finally {
+      setLoading(false);
+    }
+    navigate('/', { replace: true });
   };
 
   return (

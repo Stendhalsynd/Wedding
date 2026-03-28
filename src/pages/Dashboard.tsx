@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { collection, query, where, onSnapshot, doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 import { Plus, MapPin, Users, Star, CreditCard, Utensils, Bus, Sparkles } from 'lucide-react';
 import { User } from 'firebase/auth';
+import AuthorAvatar from '../components/AuthorAvatar';
+import { toAuthorDisplay, UserRole } from '../utils/profileRules';
 
 function AlertModal({ 
   isOpen, 
@@ -39,6 +41,7 @@ function AlertModal({
 
 export default function Dashboard({ user, coupleId, isConnected }: { user: User, coupleId: string, isConnected: boolean }) {
   const [halls, setHalls] = useState<any[]>([]);
+  const [authorProfiles, setAuthorProfiles] = useState<Record<string, { displayName?: string; role?: UserRole | null; profileImageUrl?: string | null }>>({});
   const [alertConfig, setAlertConfig] = useState<{ 
     isOpen: boolean, 
     title: string, 
@@ -62,6 +65,47 @@ export default function Dashboard({ user, coupleId, isConnected }: { user: User,
     });
     return () => unsubscribe();
   }, [coupleId]);
+
+  useEffect(() => {
+    const authorIds = Array.from(new Set(halls.map((hall) => hall.authorId).filter(Boolean)));
+    if (authorIds.length === 0) {
+      setAuthorProfiles({});
+      return;
+    }
+
+    let isCancelled = false;
+
+    const loadAuthorProfiles = async () => {
+      const entries = await Promise.all(
+        authorIds.map(async (authorId) => {
+          const userSnap = await getDoc(doc(db, 'users', authorId));
+          if (!userSnap.exists()) {
+            return [authorId, {}] as const;
+          }
+
+          const data = userSnap.data();
+          return [
+            authorId,
+            {
+              displayName: data.displayName,
+              role: data.role ?? null,
+              profileImageUrl: data.profileImageUrl ?? null,
+            },
+          ] as const;
+        })
+      );
+
+      if (!isCancelled) {
+        setAuthorProfiles(Object.fromEntries(entries));
+      }
+    };
+
+    loadAuthorProfiles();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [halls]);
 
   const handleAddHall = async () => {
     try {
@@ -91,13 +135,6 @@ export default function Dashboard({ user, coupleId, isConnected }: { user: User,
       showAlert("오류", "웨딩홀 추가 중 오류가 발생했습니다.");
     }
   };
-
-  const groupedHalls = halls.reduce((acc, hall) => {
-    const name = hall.name || '새 웨딩홀';
-    if (!acc[name]) acc[name] = [];
-    acc[name].push(hall);
-    return acc;
-  }, {} as Record<string, any[]>);
 
   const getStatusBadge = (status: string) => {
     switch(status) {
@@ -136,6 +173,12 @@ export default function Dashboard({ user, coupleId, isConnected }: { user: User,
             const selectedHall = hall.halls && hall.halls.length > 0 
               ? hall.halls[hall.selectedHallIndex || 0] 
               : { name: hall.subHallName || '홀 미지정', time: hall.weddingTime || '시간 미정', rentalFee: hall.rentalFee, mealFee: hall.mealFee, guaranteedGuests: hall.guaranteedGuests };
+            const authorProfile = hall.authorId ? authorProfiles[hall.authorId] : undefined;
+            const authorDisplay = toAuthorDisplay({
+              authorName: authorProfile?.displayName || hall.authorName,
+              userRole: authorProfile?.role ?? null,
+              profileImageUrl: authorProfile?.profileImageUrl,
+            });
 
             return (
               <div 
@@ -145,14 +188,23 @@ export default function Dashboard({ user, coupleId, isConnected }: { user: User,
               >
                 <div className="flex justify-between items-start mb-3">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600">
-                      {hall.authorName ? hall.authorName.charAt(0) : '나'}
-                    </div>
+                    <AuthorAvatar display={authorDisplay} size="sm" />
                     <div>
                       <p className="text-sm font-bold text-slate-700">{hall.name || '새 웨딩홀'}</p>
-                      <p className="text-[10px] text-slate-400">
-                        {hall.visitDate ? new Date(hall.visitDate).toLocaleDateString() : '방문일 미정'}
-                      </p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <p className="text-[10px] text-slate-400">
+                          {hall.visitDate ? new Date(hall.visitDate).toLocaleDateString() : '방문일 미정'}
+                        </p>
+                        {authorDisplay.label ? (
+                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                            authorDisplay.label === '예신' ? 'bg-rose-100 text-rose-600' : 'bg-blue-100 text-blue-600'
+                          }`}>
+                            {authorDisplay.label}
+                          </span>
+                        ) : (
+                          <span className="text-[10px] text-slate-400">작성자 {authorDisplay.name}</span>
+                        )}
+                      </div>
                     </div>
                   </div>
                   {getStatusBadge(hall.status)}

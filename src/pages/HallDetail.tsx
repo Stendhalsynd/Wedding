@@ -1,11 +1,13 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { doc, onSnapshot, updateDoc, deleteDoc, serverTimestamp, addDoc, collection, setDoc } from 'firebase/firestore';
+import { doc, onSnapshot, updateDoc, deleteDoc, serverTimestamp, collection, setDoc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { ArrowLeft, Trash2, Sparkles, MapPin, Star, Calendar as CalendarIcon, Clock, Plus } from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
 import Markdown from 'react-markdown';
 import { User } from 'firebase/auth';
+import AuthorAvatar from '../components/AuthorAvatar';
+import { toAuthorDisplay, UserRole } from '../utils/profileRules';
 
 function TimePickerModal({ isOpen, onClose, onSelect, initialTime }: { isOpen: boolean, onClose: () => void, onSelect: (time: string) => void, initialTime: string }) {
   const [hour, setHour] = useState(initialTime ? initialTime.split(':')[0] : '12');
@@ -160,6 +162,7 @@ export default function HallDetail({ user, coupleId, isConnected }: { user: User
   const [localSubHallName, setLocalSubHallName] = useState('');
   const [localNotes, setLocalNotes] = useState('');
   const [selectedHallIndex, setSelectedHallIndex] = useState(0);
+  const [authorProfile, setAuthorProfile] = useState<{ displayName?: string; role?: UserRole | null; profileImageUrl?: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
   const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
   const [confirmConfig, setConfirmConfig] = useState<{ 
@@ -214,6 +217,40 @@ export default function HallDetail({ user, coupleId, isConnected }: { user: User
     });
     return () => unsubscribe();
   }, [id, coupleId, navigate]);
+
+  useEffect(() => {
+    if (!hall?.authorId) {
+      setAuthorProfile(null);
+      return;
+    }
+
+    let isCancelled = false;
+
+    const loadAuthorProfile = async () => {
+      const userSnap = await getDoc(doc(db, 'users', hall.authorId));
+      if (!userSnap.exists()) {
+        if (!isCancelled) {
+          setAuthorProfile(null);
+        }
+        return;
+      }
+
+      const data = userSnap.data();
+      if (!isCancelled) {
+        setAuthorProfile({
+          displayName: data.displayName,
+          role: data.role ?? null,
+          profileImageUrl: data.profileImageUrl ?? null,
+        });
+      }
+    };
+
+    loadAuthorProfile();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [hall?.authorId]);
 
   const handleChange = async (field: string, value: any) => {
     if (!id) return;
@@ -465,6 +502,12 @@ export default function HallDetail({ user, coupleId, isConnected }: { user: User
   if (loading) return <div className="p-8 text-center text-slate-500">Loading...</div>;
   if (!hall) return null;
 
+  const authorDisplay = toAuthorDisplay({
+    authorName: authorProfile?.displayName || hall.authorName,
+    userRole: authorProfile?.role ?? null,
+    profileImageUrl: authorProfile?.profileImageUrl,
+  });
+
   return (
     <div className="bg-slate-50 min-h-screen pb-24">
       {/* Header */}
@@ -522,6 +565,19 @@ export default function HallDetail({ user, coupleId, isConnected }: { user: User
       </div>
 
       <div className="p-6 space-y-8 pt-0">
+        <div className="clay-card p-4 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <AuthorAvatar display={authorDisplay} />
+            <div>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">추가한 사람</p>
+              <p className="text-sm font-bold text-slate-700">{authorDisplay.label || authorDisplay.name}</p>
+            </div>
+          </div>
+          {!authorDisplay.label && (
+            <span className="text-xs text-slate-400">역할 미설정</span>
+          )}
+        </div>
+
         {/* Status Segmented Control */}
         <div className="clay-card p-2 flex gap-2">
           {['planned', 'visited', 'contracted'].map((status) => {

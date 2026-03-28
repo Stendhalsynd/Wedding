@@ -1,20 +1,100 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Wedding
 
-# Run and deploy your AI Studio app
+커플이 함께 웨딩홀 투어 정보를 기록하고 비교할 수 있는 웹 앱입니다. Google 로그인으로 시작하고, 연인 연결 후 같은 웨딩홀 목록을 공유하면서 상태, 방문 일정, 비용, 메모를 함께 관리할 수 있습니다.
 
-This contains everything you need to run your app locally.
+## 주요 기능
 
-View your app in AI Studio: https://ai.studio/apps/226ae31f-0826-42a7-83bb-214083c83950
+- Google 로그인 및 Firebase 기반 사용자 관리
+- 예신 / 예랑 역할 선택 및 역할별 기본 프로필 이미지 표시
+- 초대 코드 기반 커플 연결
+- 웨딩홀 추가, 상태 관리, 방문 일정 기록
+- 웨딩홀 비교, 지도 확인, 상세 메모 관리
+- Vercel 배포 + Firebase Authentication 연동
 
-## Run Locally
+## 기술 스택
 
-**Prerequisites:**  Node.js
+- React 19
+- TypeScript
+- Vite
+- Firebase Authentication / Firestore
+- Tailwind CSS
 
+## 로컬 실행
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### 1. 의존성 설치
+
+```bash
+npm install
+```
+
+이 프로젝트는 `pannellum-react`의 peer dependency 제약 때문에 루트 [`.npmrc`](/Users/jihun/StudioProjects/Wedding/.npmrc)에서 `legacy-peer-deps=true`를 사용합니다.
+
+### 2. 환경 변수 설정
+
+`.env` 또는 `.env.local`에 Firebase 웹 앱 설정 값을 넣어야 합니다.
+
+예시:
+
+```env
+VITE_FIREBASE_API_KEY=...
+VITE_FIREBASE_AUTH_DOMAIN=...
+VITE_FIREBASE_PROJECT_ID=...
+VITE_FIREBASE_STORAGE_BUCKET=...
+VITE_FIREBASE_MESSAGING_SENDER_ID=...
+VITE_FIREBASE_APP_ID=...
+```
+
+### 3. 개발 서버 실행
+
+```bash
+npm run dev
+```
+
+기본 개발 주소는 `http://localhost:3000` 입니다.
+
+## Firebase Authentication 설정
+
+Google 로그인을 사용하므로 Firebase Console의 `Authentication > Settings > Authorized domains`에 접속 도메인을 등록해야 합니다.
+
+개발 시 예시:
+
+- `localhost`
+- `127.0.0.1`
+
+배포 시 예시:
+
+- `wedding-kappa-ochre.vercel.app`
+
+도메인은 프로토콜 없이 입력합니다.
+
+## 배포
+
+이 프로젝트는 Vercel에 배포할 수 있습니다.
+
+```bash
+npx vercel pull --yes --environment preview
+npx vercel build --yes
+npx vercel deploy --prod --yes
+```
+
+현재 운영 배포 URL:
+
+- [https://wedding-kappa-ochre.vercel.app](https://wedding-kappa-ochre.vercel.app)
+
+## 릴리스 및 APK 관련 메모
+
+저장소에는 GitHub Release 업로드 스크립트가 포함되어 있습니다.
+
+- [generate-release-notes.mjs](/Users/jihun/StudioProjects/Wedding/scripts/generate-release-notes.mjs)
+- [release-apk.sh](/Users/jihun/StudioProjects/Wedding/scripts/release-apk.sh)
+- [release-discord.sh](/Users/jihun/StudioProjects/Wedding/scripts/release-discord.sh)
+
+다만 현재 이 저장소는 웹 앱이며 Android 빌드 구조가 없습니다. 따라서 이 저장소만으로 APK를 새로 빌드할 수는 없고, 이미 생성된 `release` APK 파일이 있을 때만 GitHub Release 업로드 자동화를 사용할 수 있습니다.
+
+## 검증 명령
+
+```bash
+npm test
+npm run lint
+npm run build
+```

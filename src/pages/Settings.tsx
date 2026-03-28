@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { logOut, auth, db } from '../firebase';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { deleteField, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { User, LogOut, Link as LinkIcon, ChevronRight } from 'lucide-react';
 import { DEFAULT_PROFILE_IMAGES } from '../constants/profileImages';
+import { getResolvedProfileImageUrl } from '../utils/profileRules';
 
 export default function SettingsView({ isConnected }: { isConnected: boolean }) {
   const navigate = useNavigate();
@@ -29,7 +30,8 @@ export default function SettingsView({ isConnected }: { isConnected: boolean }) 
       const profileImageUrl = DEFAULT_PROFILE_IMAGES[newRole];
       await updateDoc(doc(db, 'users', user.uid), {
         role: newRole,
-        profileImageUrl
+        profileImageUrl,
+        roleSetupDismissedAt: deleteField(),
       });
       setUserData({ ...userData, role: newRole, profileImageUrl });
     } catch (error) {
@@ -51,14 +53,10 @@ export default function SettingsView({ isConnected }: { isConnected: boolean }) 
           <div className="relative">
             <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden border-4 border-white shadow-inner">
               {(() => {
-                const profileUrl = userData?.profileImageUrl;
-                const role = userData?.role;
-                const isOldUrl = profileUrl?.includes('picsum.photos') || 
-                                 profileUrl?.includes('dicebear.com/7.x') ||
-                                 profileUrl?.includes('fun-emoji') ||
-                                 profileUrl?.includes('adventurer') ||
-                                 profileUrl?.includes('avataaars');
-                const finalUrl = (isOldUrl || !profileUrl) && role ? DEFAULT_PROFILE_IMAGES[role as 'bride' | 'groom'] : profileUrl;
+                const finalUrl = getResolvedProfileImageUrl({
+                  role: userData?.role,
+                  profileImageUrl: userData?.profileImageUrl,
+                });
 
                 if (finalUrl) {
                   return (

@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+TAG="${1:-}"
+APK_PATH="${2:-}"
+TITLE="${3:-Wedding Android APK}"
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+
+if [[ -z "$TAG" || -z "$APK_PATH" ]]; then
+  echo "Usage: $0 <tag> <apk_path> [title]"
+  exit 1
+fi
+
+if [[ ! -f "$APK_PATH" ]]; then
+  echo "[FAIL] APK not found: $APK_PATH"
+  exit 1
+fi
+
+APK_NAME_LOWER="$(basename "$APK_PATH" | tr '[:upper:]' '[:lower:]')"
+if [[ "$APK_NAME_LOWER" == *preview* || "$APK_NAME_LOWER" == *debug* ]]; then
+  echo "[FAIL] Preview/debug APK cannot be uploaded to release: $APK_PATH"
+  exit 1
+fi
+
+if [[ "$APK_NAME_LOWER" != *release* ]]; then
+  echo "[FAIL] Release upload requires a release APK artifact: $APK_PATH"
+  exit 1
+fi
+
+if [[ "${RELEASE_APK_DRY_RUN:-0}" == "1" ]]; then
+  echo "[PASS] release-apk dry-run: validated release artifact ${APK_PATH}"
+  exit 0
+fi
+
+if ! command -v gh >/dev/null 2>&1; then
+  echo "[FAIL] gh CLI is not installed"
+  exit 1
+fi
+
+if [[ -n "${GITHUB_TOKEN:-}" ]]; then
+  export GH_TOKEN="$GITHUB_TOKEN"
+fi
+
+NOTES_FILE="${ROOT_DIR}/dist/releases/wedding_${TAG}_release_notes.md"
+mkdir -p "$(dirname "$NOTES_FILE")"
+node "${ROOT_DIR}/scripts/generate-release-notes.mjs" "$TAG" "$NOTES_FILE"
+cat >> "$NOTES_FILE" <<NOTE
+- APK: ${APK_PATH}
+NOTE
+
+if gh release view "$TAG" >/dev/null 2>&1; then
+  gh release upload "$TAG" "$APK_PATH" --clobber
+else
+  gh release create "$TAG" "$APK_PATH" --title "$TITLE" --notes-file "$NOTES_FILE"
+fi
+
+echo "[PASS] Uploaded APK to GitHub release: $TAG"
