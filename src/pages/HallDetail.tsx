@@ -511,7 +511,7 @@ export default function HallDetail({ user, coupleId, isConnected }: { user: User
   return (
     <div className="bg-slate-50 min-h-screen pb-24">
       {/* Header */}
-      <div className="sticky top-0 bg-slate-50/80 backdrop-blur-md z-10 px-4 py-4 flex items-center justify-between border-b border-white/50">
+      <div className="sticky top-0 bg-slate-50/95 backdrop-blur-md z-20 px-4 pb-4 pt-safe-top flex items-center justify-between border-b border-white/50">
         <button onClick={() => navigate('/')} className="p-2 clay-btn text-slate-600">
           <ArrowLeft className="h-5 w-5" />
         </button>

@@ -43,11 +43,14 @@ export default function SettingsView({ isConnected }: { isConnected: boolean }) 
   };
 
   return (
-    <div className="p-6 pb-32 space-y-6">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-slate-800">설정</h1>
+    <div className="min-h-full bg-slate-50">
+      <div className="sticky top-0 z-20 border-b border-white/40 bg-slate-50/95 px-6 pb-4 pt-safe-top backdrop-blur-md">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-slate-800">설정</h1>
+        </div>
       </div>
-      
+
+      <div className="space-y-6 px-6 pb-safe-nav pt-6">
       {/* Profile Section */}
       <div className="clay-card p-6 space-y-6">
         <div className="flex items-center gap-4">
@@ -145,6 +148,7 @@ export default function SettingsView({ isConnected }: { isConnected: boolean }) 
             로그아웃
           </button>
         </div>
+      </div>
       </div>
     </div>
   );

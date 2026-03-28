@@ -30,15 +30,15 @@ export default function MapView() {
   }, [user]);
 
   return (
-    <div className="bg-slate-50 px-6 pt-4 pb-10">
-      <div className="mb-6 flex items-center justify-between">
+    <div className="min-h-full flex flex-col bg-slate-50">
+      <div className="sticky top-0 z-20 mb-4 border-b border-white/40 bg-slate-50/95 px-6 pb-4 pt-safe-top backdrop-blur-md shrink-0">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-800">지도 뷰</h1>
           <p className="text-sm text-slate-500 mt-1">우리의 웨딩홀 위치를 확인하세요</p>
         </div>
       </div>
 
-      <div className="space-y-4 pb-safe-nav">
+      <div className="flex flex-1 min-h-0 flex-col gap-4 px-6 pb-safe-nav">
         {halls.length === 0 ? (
           <div className="clay-card p-8 flex flex-col items-center justify-center text-slate-400 text-center h-64">
             <MapPin className="h-10 w-10 mb-4 text-slate-300" />
@@ -46,7 +46,7 @@ export default function MapView() {
             <p className="text-sm mt-1">웨딩홀 상세 페이지에서 위치를 입력해주세요.</p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="flex flex-1 min-h-0 flex-col gap-4">
             <div className="clay-card p-2 flex gap-2 overflow-x-auto hide-scrollbar shrink-0">
               {halls.map(hall => (
                 <button
@@ -62,8 +62,8 @@ export default function MapView() {
             </div>
 
             {selectedHall && (
-              <div className="space-y-4">
-                <div className="clay-card h-[min(58vh,34rem)] min-h-[24rem] overflow-hidden border-4 border-white">
+              <div className="flex flex-1 min-h-0 flex-col gap-4">
+                <div className="clay-card flex-1 min-h-[18rem] overflow-hidden border-4 border-white">
                   <iframe
                     width="100%"
                     height="100%"
@@ -77,7 +77,7 @@ export default function MapView() {
 
                 <button
                   onClick={() => navigate(`/hall/${selectedHall.id}`)}
-                  className="clay-card w-full border border-white/70 p-4 text-left active:scale-[0.98] transition-transform"
+                  className="clay-card w-full shrink-0 border border-white/70 p-4 text-left active:scale-[0.98] transition-transform"
                 >
                   <h3 className="font-bold text-slate-800">{selectedHall.name}</h3>
                   <p className="mt-1 flex items-center gap-1 text-xs text-slate-500">

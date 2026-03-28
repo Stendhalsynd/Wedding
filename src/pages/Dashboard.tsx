@@ -145,8 +145,8 @@ export default function Dashboard({ user, coupleId, isConnected }: { user: User,
   };
 
   return (
-    <div className="px-6 pt-4 pb-10">
-      <div className="sticky top-0 z-20 -mx-6 mb-6 border-b border-white/40 bg-slate-50/95 px-6 pb-4 pt-2 backdrop-blur-md">
+    <div className="min-h-full bg-slate-50 px-6 pb-10">
+      <div className="sticky top-0 z-20 -mx-6 mb-6 border-b border-white/40 bg-slate-50/95 px-6 pb-4 pt-safe-top backdrop-blur-md">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-800">웨딩홀 투어</h1>

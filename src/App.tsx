@@ -16,6 +16,7 @@ import MapView from './pages/Map';
 import CompareView from './pages/Compare';
 import SettingsView from './pages/Settings';
 import MobileLayout from './components/layout/MobileLayout';
+import { configureSystemUi } from './services/systemUi';
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -24,6 +25,10 @@ export default function App() {
   const [userRole, setUserRole] = useState<string | null>(null);
   const [needsRoleSetup, setNeedsRoleSetup] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+
+  useEffect(() => {
+    configureSystemUi();
+  }, []);
 
   useEffect(() => {
     let unsubscribeUserDoc: () => void;

@@ -1,4 +1,5 @@
 /// <reference types="@capacitor-firebase/authentication" />
+/// <reference types="@capacitor/status-bar" />
 
 import type { CapacitorConfig } from '@capacitor/cli';
 
@@ -15,6 +16,11 @@ const config: WeddingCapacitorConfig = {
     FirebaseAuthentication: {
       skipNativeAuth: true,
       providers: ['google.com'],
+    },
+    StatusBar: {
+      overlaysWebView: false,
+      style: 'LIGHT',
+      backgroundColor: '#0f172a',
     },
   },
 };

@@ -113,14 +113,14 @@ export default function CompareView() {
   ];
 
   return (
-    <div className="flex flex-col h-full bg-slate-50">
-      <div className="p-6 pb-4 shrink-0">
+    <div className="min-h-full flex flex-col bg-slate-50">
+      <div className="sticky top-0 z-20 shrink-0 border-b border-white/40 bg-slate-50/95 px-6 pb-4 pt-safe-top backdrop-blur-md">
         <h1 className="text-2xl font-bold tracking-tight text-slate-800">웨딩홀 비교</h1>
         <p className="text-sm text-slate-500 mt-1">한눈에 보는 우리의 웨딩홀 후보</p>
       </div>
 
       {/* Filter */}
-      <div className="px-6 mb-6 flex items-center gap-2 overflow-x-auto hide-scrollbar shrink-0">
+      <div className="px-6 py-4 flex items-center gap-2 overflow-x-auto hide-scrollbar shrink-0">
         <div className="flex items-center gap-2 bg-white p-1 rounded-2xl border border-slate-100 shadow-sm">
           {['all', 'planned', 'visited', 'contracted'].map(status => (
             <button
@@ -136,7 +136,7 @@ export default function CompareView() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-x-auto px-6 pb-32 hide-scrollbar">
+      <div className="flex-1 min-h-0 overflow-x-auto px-6 pb-safe-nav hide-scrollbar">
         {displayHalls.length === 0 ? (
           <div className="clay-card p-8 flex flex-col items-center justify-center text-slate-400 text-center h-64">
             <p>비교할 웨딩홀이 없습니다.</p>

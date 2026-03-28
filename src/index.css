@@ -19,6 +19,10 @@
     padding-bottom: max(env(safe-area-inset-bottom, 0px), 0.75rem);
   }
 
+  .pt-safe-top {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 0.875rem);
+  }
+
   .pb-safe-nav {
     padding-bottom: calc(5.25rem + env(safe-area-inset-bottom, 0px));
   }
