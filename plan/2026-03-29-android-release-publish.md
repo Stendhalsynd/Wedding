@@ -4,12 +4,12 @@
 - [x] S2-5 작성
 - [x] root Android Gradle 정리
 - [x] signed APK 빌드
-- [ ] git push / tag / GitHub Release
-- [ ] Discord 공지
-- [ ] S2-5 검증
+- [x] git push / tag / GitHub Release
+- [x] Discord 공지
+- [x] S2-5 검증
 
 ## doing
-- GitHub Release 업로드 대기
+- 완료
 
 ## done
 - `google-services.json`이 로컬에 배치되었고 `.gitignore`에 의해 추적되지 않는 점 확인
@@ -17,12 +17,17 @@
 - 루트 `android/build.gradle`의 잘못된 Firebase plugin/dependency 블록 제거
 - release build 스크립트가 `android/keystore.properties`를 임시 생성 후 원복하도록 수정
 - signed APK 생성 완료
+- `main` push 및 `v0.0.0` 태그 push 완료
+- GitHub Release 생성 및 APK asset 업로드 완료
+- Discord webhook 공지 완료
 
 ## verification
 - `npm test -- tests/unit/firestore-rules-user-fields.test.ts tests/unit/android-release-build.test.ts` 통과
 - `npm run release:android:build` 통과
 - APK 생성: `/Users/jihun/StudioProjects/Wedding/dist/releases/Wedding-v0.0.0-release.apk`
 - APK SHA-256: `bfb1bca69c35a2fd66f303a93e7a16637961570bd4fb4b0c8c446c5021bbd286`
+- GitHub Release: `https://github.com/Stendhalsynd/Wedding/releases/tag/v0.0.0`
+- Discord webhook 응답: `HTTP_CODE=204`
 
 ## risks
 - `package.json.version`이 현재 `0.0.0`이므로 첫 release 태그는 `v0.0.0`이 된다.
