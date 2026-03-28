@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -47,6 +47,10 @@ test('release-android-build dry-run accepts complete signing configuration', () 
   const rootDir = path.resolve(currentDir, '..', '..');
   const tempDir = mkdtempSync(path.join(os.tmpdir(), 'wedding-keystore-'));
   const fakeKeystorePath = path.join(tempDir, 'release.keystore');
+  const keystorePropertiesPath = path.join(rootDir, 'android', 'keystore.properties');
+  const originalProperties = existsSync(keystorePropertiesPath)
+    ? readFileSync(keystorePropertiesPath, 'utf8')
+    : null;
   writeFileSync(fakeKeystorePath, 'not-a-real-keystore');
 
   const output = execFileSync('bash', ['scripts/release-android-build.sh'], {
@@ -65,8 +69,11 @@ test('release-android-build dry-run accepts complete signing configuration', () 
 
   assert.match(output, /\[PASS\] android-build dry-run/i);
 
-  const keystorePropertiesPath = path.join(rootDir, 'android', 'keystore.properties');
-  const keystoreProperties = readFileSync(keystorePropertiesPath, 'utf8');
-  assert.match(keystoreProperties, /storeFile=/);
-  assert.match(keystoreProperties, /keyAlias=wedding/);
+  if (originalProperties === null) {
+    assert.equal(existsSync(keystorePropertiesPath), false);
+  } else {
+    assert.equal(readFileSync(keystorePropertiesPath, 'utf8'), originalProperties);
+  }
+
+  rmSync(tempDir, { recursive: true, force: true });
 });

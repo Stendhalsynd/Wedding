@@ -4,6 +4,24 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 ANDROID_DIR="${ROOT_DIR}/android"
 KEYSTORE_PROPERTIES_PATH="${ANDROID_DIR}/keystore.properties"
+KEYSTORE_PROPERTIES_BACKUP_PATH="$(mktemp "${TMPDIR:-/tmp}/wedding-keystore-properties-XXXXXX")"
+RESTORE_MODE="delete"
+
+cleanup() {
+  if [[ "${RESTORE_MODE}" == "restore" && -f "${KEYSTORE_PROPERTIES_BACKUP_PATH}" ]]; then
+    cp "${KEYSTORE_PROPERTIES_BACKUP_PATH}" "${KEYSTORE_PROPERTIES_PATH}"
+  else
+    rm -f "${KEYSTORE_PROPERTIES_PATH}"
+  fi
+  rm -f "${KEYSTORE_PROPERTIES_BACKUP_PATH}"
+}
+
+if [[ -f "${KEYSTORE_PROPERTIES_PATH}" ]]; then
+  cp "${KEYSTORE_PROPERTIES_PATH}" "${KEYSTORE_PROPERTIES_BACKUP_PATH}"
+  RESTORE_MODE="restore"
+fi
+
+trap cleanup EXIT
 
 require_env() {
   local name="$1"

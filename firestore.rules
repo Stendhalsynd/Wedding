@@ -25,13 +25,14 @@ service cloud.firestore {
     }
     
     function isValidUser(data) {
-      return hasOnlyAllowedFields(['uid', 'email', 'displayName', 'coupleId', 'role', 'profileImageUrl']) &&
+      return hasOnlyAllowedFields(['uid', 'email', 'displayName', 'coupleId', 'role', 'profileImageUrl', 'roleSetupDismissedAt']) &&
              data.uid is string && data.uid.size() > 0 && data.uid.size() < 100 &&
              data.email is string && isValidEmail(data.email) &&
              (!('displayName' in data) || data.displayName == null || (data.displayName is string && data.displayName.size() <= 100)) &&
              (!('coupleId' in data) || data.coupleId == null || (data.coupleId is string && data.coupleId.size() <= 100)) &&
              (!('role' in data) || data.role == null || (data.role in ['bride', 'groom'])) &&
-             (!('profileImageUrl' in data) || data.profileImageUrl == null || (data.profileImageUrl is string && data.profileImageUrl.size() < 1048576));
+             (!('profileImageUrl' in data) || data.profileImageUrl == null || (data.profileImageUrl is string && data.profileImageUrl.size() < 1048576)) &&
+             (!('roleSetupDismissedAt' in data) || data.roleSetupDismissedAt == null || data.roleSetupDismissedAt is timestamp);
     }
     
     function isValidCouple(data) {

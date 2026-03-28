@@ -28,7 +28,7 @@
 - [x] S2-4 리뷰 게이트
 
 ## doing
-- 실제 사용자 keystore 기반 S2-3 signed APK 검증 진행 전 대기
+- 실제 사용자 keystore 생성 및 `.env` 연결 완료, signed APK 검증 대기
 
 ## done
 - S2-0 실행 모델에 따라 S2-1 범위 확정
@@ -55,6 +55,7 @@
 - `scripts/generate-app-icons.py`로 웹/Android 아이콘 생성 자동화 추가
 - `index.html`에 favicon / apple-touch-icon 링크와 `Wedding Tour` 타이틀 반영
 - Android launcher icon 및 adaptive foreground/background 자산 교체 완료
+- `/Users/jihun/.keystores/wedding-release.jks` 생성 및 `.env` Android signing 변수 연결 완료
 
 ## verification
 - `npm test -- tests/unit/capacitor-config.test.ts` 통과
