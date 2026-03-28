@@ -145,21 +145,23 @@ export default function Dashboard({ user, coupleId, isConnected }: { user: User,
   };
 
   return (
-    <div className="p-6 pb-32">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-800">웨딩홀 투어</h1>
-          <p className="text-sm text-slate-500 mt-1">우리의 완벽한 베뉴 찾기</p>
+    <div className="px-6 pt-4 pb-10">
+      <div className="sticky top-0 z-20 -mx-6 mb-6 border-b border-white/40 bg-slate-50/95 px-6 pb-4 pt-2 backdrop-blur-md">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-800">웨딩홀 투어</h1>
+            <p className="mt-1 text-sm text-slate-500">우리의 완벽한 베뉴 찾기</p>
+          </div>
         </div>
       </div>
 
-      {!isConnected && (
-        <div className="mb-6 p-4 clay-card bg-rose-50/50 text-sm text-slate-600">
-          현재 혼자 기록 중입니다. 설정 탭에서 연인과 연결하면 서로의 기록을 함께 볼 수 있습니다.
-        </div>
-      )}
-
       <div className="space-y-6">
+        {!isConnected && (
+          <div className="p-4 clay-card bg-rose-50/50 text-sm text-slate-600">
+            현재 혼자 기록 중입니다. 설정 탭에서 연인과 연결하면 서로의 기록을 함께 볼 수 있습니다.
+          </div>
+        )}
+
         {halls.length === 0 ? (
           <div className="text-center py-16 text-slate-400">
             <div className="clay-card w-20 h-20 mx-auto flex items-center justify-center mb-4 bg-white">
@@ -271,12 +273,16 @@ export default function Dashboard({ user, coupleId, isConnected }: { user: User,
         )}
       </div>
 
-      <button 
-        className="fixed bottom-24 right-6 w-14 h-14 bg-rose-500 text-white rounded-full shadow-[0_8px_16px_rgba(244,63,94,0.4)] flex items-center justify-center active:scale-90 transition-transform z-40"
-        onClick={handleAddHall}
-      >
-        <Plus className="h-6 w-6" />
-      </button>
+      <div className="pointer-events-none fixed inset-x-0 bottom-safe-fab z-[60]">
+        <div className="mx-auto flex w-full max-w-md justify-end px-6">
+          <button
+            className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-rose-500 text-white shadow-[0_8px_16px_rgba(244,63,94,0.4)] transition-transform active:scale-90"
+            onClick={handleAddHall}
+          >
+            <Plus className="h-6 w-6" />
+          </button>
+        </div>
+      </div>
 
       <AlertModal 
         isOpen={alertConfig.isOpen}
