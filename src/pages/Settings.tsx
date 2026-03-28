@@ -43,10 +43,12 @@ export default function SettingsView({ isConnected }: { isConnected: boolean }) 
   };
 
   return (
-    <div className="min-h-full bg-slate-50">
-      <div className="sticky top-0 z-20 border-b border-white/40 bg-slate-50/95 px-6 pb-4 pt-safe-top backdrop-blur-md">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-slate-800">설정</h1>
+    <div className="min-h-full bg-slate-50 pt-fixed-page-header">
+      <div className="fixed inset-x-0 top-0 z-20">
+        <div className="mx-auto max-w-md border-b border-white/40 bg-slate-50/95 px-6 pb-4 pt-safe-top backdrop-blur-md">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold text-slate-800">설정</h1>
+          </div>
         </div>
       </div>
 

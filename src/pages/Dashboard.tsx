@@ -145,12 +145,14 @@ export default function Dashboard({ user, coupleId, isConnected }: { user: User,
   };
 
   return (
-    <div className="min-h-full bg-slate-50 px-6 pb-10">
-      <div className="sticky top-0 z-20 -mx-6 mb-6 border-b border-white/40 bg-slate-50/95 px-6 pb-4 pt-safe-top backdrop-blur-md">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-800">웨딩홀 투어</h1>
-            <p className="mt-1 text-sm text-slate-500">우리의 완벽한 베뉴 찾기</p>
+    <div className="min-h-full bg-slate-50 px-6 pb-10 pt-fixed-page-header">
+      <div className="fixed inset-x-0 top-0 z-20">
+        <div className="mx-auto max-w-md border-b border-white/40 bg-slate-50/95 px-6 pb-4 pt-safe-top backdrop-blur-md">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-slate-800">웨딩홀 투어</h1>
+              <p className="mt-1 text-sm text-slate-500">우리의 완벽한 베뉴 찾기</p>
+            </div>
           </div>
         </div>
       </div>

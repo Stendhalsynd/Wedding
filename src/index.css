@@ -20,7 +20,11 @@
   }
 
   .pt-safe-top {
-    padding-top: calc(env(safe-area-inset-top, 0px) + 0.875rem);
+    padding-top: calc(env(safe-area-inset-top, 0px) + 1.125rem);
+  }
+
+  .pt-fixed-page-header {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 6.5rem);
   }
 
   .pb-safe-nav {

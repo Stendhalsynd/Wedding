@@ -20,8 +20,8 @@ export default function MobileLayout() {
       </main>
 
       {/* Bottom Navigation */}
-      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-3 pb-safe-bottom">
-        <nav className="pointer-events-auto mx-auto flex w-full max-w-md items-center justify-between rounded-t-3xl border-t border-white/50 bg-slate-50/80 px-5 py-3 backdrop-blur-md shadow-[0_-4px_16px_rgba(0,0,0,0.02)]">
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 border-t border-white/60 bg-slate-50/90 backdrop-blur-xl shadow-[0_-8px_20px_rgba(15,23,42,0.05)]">
+        <nav className="pointer-events-auto mx-auto flex w-full max-w-md items-center justify-between px-5 pt-3 pb-[calc(env(safe-area-inset-bottom,0px)+0.75rem)]">
           {navItems.map((item) => {
             const isActive =
               location.pathname === item.path ||

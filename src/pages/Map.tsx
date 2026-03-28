@@ -30,11 +30,13 @@ export default function MapView() {
   }, [user]);
 
   return (
-    <div className="min-h-full flex flex-col bg-slate-50">
-      <div className="sticky top-0 z-20 mb-4 border-b border-white/40 bg-slate-50/95 px-6 pb-4 pt-safe-top backdrop-blur-md shrink-0">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-800">지도 뷰</h1>
-          <p className="text-sm text-slate-500 mt-1">우리의 웨딩홀 위치를 확인하세요</p>
+    <div className="min-h-full flex flex-col bg-slate-50 pt-fixed-page-header">
+      <div className="fixed inset-x-0 top-0 z-20">
+        <div className="mx-auto max-w-md border-b border-white/40 bg-slate-50/95 px-6 pb-4 pt-safe-top backdrop-blur-md">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-800">지도 뷰</h1>
+            <p className="mt-1 text-sm text-slate-500">우리의 웨딩홀 위치를 확인하세요</p>
+          </div>
         </div>
       </div>
 
@@ -62,11 +64,10 @@ export default function MapView() {
             </div>
 
             {selectedHall && (
-              <div className="flex flex-1 min-h-0 flex-col gap-4">
-                <div className="clay-card flex-1 min-h-[18rem] overflow-hidden border-4 border-white">
+              <div className="relative flex flex-1 min-h-[28rem] flex-col">
+                <div className="absolute inset-0 overflow-hidden rounded-[2rem] border-4 border-white bg-slate-100 shadow-[8px_8px_16px_rgba(0,0,0,0.05),-8px_-8px_16px_rgba(255,255,255,0.8)]">
                   <iframe
-                    width="100%"
-                    height="100%"
+                    className="absolute inset-0 h-full w-full"
                     style={{ border: 0 }}
                     loading="lazy"
                     allowFullScreen
@@ -75,21 +76,30 @@ export default function MapView() {
                   ></iframe>
                 </div>
 
-                <button
-                  onClick={() => navigate(`/hall/${selectedHall.id}`)}
-                  className="clay-card w-full shrink-0 border border-white/70 p-4 text-left active:scale-[0.98] transition-transform"
-                >
-                  <h3 className="font-bold text-slate-800">{selectedHall.name}</h3>
-                  <p className="mt-1 flex items-center gap-1 text-xs text-slate-500">
-                    <MapPin className="h-3 w-3" />
-                    {selectedHall.location}
-                  </p>
-                  {selectedHall.halls && selectedHall.halls.length > 0 && (
-                    <p className="mt-1 text-[10px] font-bold text-rose-400">
-                      {selectedHall.halls[selectedHall.selectedHallIndex || 0].name} ({selectedHall.halls[selectedHall.selectedHallIndex || 0].time})
+                <div className="pointer-events-none absolute inset-0 z-10">
+                  <button
+                    onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedHall.location)}`, '_blank', 'noopener,noreferrer')}
+                    className="pointer-events-auto absolute left-4 top-4 rounded-2xl border border-white/80 bg-white/95 px-4 py-3 text-sm font-bold text-blue-600 shadow-lg shadow-slate-200"
+                  >
+                    지도에서 열기
+                  </button>
+
+                  <button
+                    onClick={() => navigate(`/hall/${selectedHall.id}`)}
+                    className="pointer-events-auto absolute inset-x-0 bottom-0 rounded-[2rem] border border-white/70 bg-slate-50/96 p-5 text-left shadow-[0_-12px_24px_rgba(15,23,42,0.08)] backdrop-blur-md active:scale-[0.98] transition-transform"
+                  >
+                    <h3 className="font-bold text-slate-800">{selectedHall.name}</h3>
+                    <p className="mt-1 flex items-center gap-1 text-xs text-slate-500">
+                      <MapPin className="h-3 w-3" />
+                      {selectedHall.location}
                     </p>
-                  )}
-                </button>
+                    {selectedHall.halls && selectedHall.halls.length > 0 && (
+                      <p className="mt-1 text-[10px] font-bold text-rose-400">
+                        {selectedHall.halls[selectedHall.selectedHallIndex || 0].name} ({selectedHall.halls[selectedHall.selectedHallIndex || 0].time})
+                      </p>
+                    )}
+                  </button>
+                </div>
               </div>
             )}
           </div>

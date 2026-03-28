@@ -9,6 +9,11 @@ import { User } from 'firebase/auth';
 import AuthorAvatar from '../components/AuthorAvatar';
 import { toAuthorDisplay, UserRole } from '../utils/profileRules';
 
+const RENTAL_FEE_MAX = 1000;
+const MEAL_FEE_MAX = 10;
+const RENTAL_FEE_BUDGET_LIMIT = 750;
+const MEAL_FEE_BUDGET_LIMIT = 7.5;
+
 function TimePickerModal({ isOpen, onClose, onSelect, initialTime }: { isOpen: boolean, onClose: () => void, onSelect: (time: string) => void, initialTime: string }) {
   const [hour, setHour] = useState(initialTime ? initialTime.split(':')[0] : '12');
   const [minute, setMinute] = useState(initialTime ? initialTime.split(':')[1] : '00');
@@ -507,6 +512,11 @@ export default function HallDetail({ user, coupleId, isConnected }: { user: User
     userRole: authorProfile?.role ?? null,
     profileImageUrl: authorProfile?.profileImageUrl,
   });
+  const selectedHall = hall.halls[selectedHallIndex];
+  const rentalFee = selectedHall?.rentalFee || 0;
+  const mealFee = selectedHall?.mealFee || 0;
+  const isRentalFeeOverBudget = rentalFee > RENTAL_FEE_BUDGET_LIMIT;
+  const isMealFeeOverBudget = mealFee > MEAL_FEE_BUDGET_LIMIT;
 
   return (
     <div className="bg-slate-50 min-h-screen pb-24">
@@ -699,39 +709,63 @@ export default function HallDetail({ user, coupleId, isConnected }: { user: User
 
         {/* Estimate Info */}
         <section className="space-y-5">
-          <h2 className="text-lg font-bold text-slate-800 pl-2 border-l-4 border-rose-400">견적 정보 ({hall.halls[selectedHallIndex].name})</h2>
+          <h2 className="text-lg font-bold text-slate-800 pl-2 border-l-4 border-rose-400">견적 정보 ({selectedHall.name})</h2>
           
           <div className="clay-card p-5 space-y-6">
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700 flex justify-between">
                 <span>대관료</span>
-                <span className="text-rose-500">{hall.halls[selectedHallIndex].rentalFee ? `${hall.halls[selectedHallIndex].rentalFee} 만원` : '입력 안됨'}</span>
+                <div className="flex items-center gap-2">
+                  <span className={isRentalFeeOverBudget ? 'text-amber-500' : 'text-rose-500'}>
+                    {rentalFee ? `${rentalFee} 만원` : '입력 안됨'}
+                  </span>
+                  {isRentalFeeOverBudget && (
+                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+                      예산 초과
+                    </span>
+                  )}
+                </div>
               </label>
               <input 
-                type="range" min="0" max="800" step="10"
-                className="w-full accent-rose-400"
-                value={hall.halls[selectedHallIndex].rentalFee || 0} 
+                type="range" min="0" max={RENTAL_FEE_MAX} step="10"
+                className={`w-full ${isRentalFeeOverBudget ? 'accent-amber-500' : 'accent-rose-400'}`}
+                value={rentalFee}
                 onChange={(e) => handleHallChange('rentalFee', Number(e.target.value))} 
               />
               <div className="flex justify-between text-xs text-slate-400">
-                <span>0</span><span>800</span>
+                <span>0</span><span>{RENTAL_FEE_MAX}</span>
               </div>
+              <p className={`text-[11px] font-medium ${isRentalFeeOverBudget ? 'text-amber-600' : 'text-slate-400'}`}>
+                예산 기준 {RENTAL_FEE_BUDGET_LIMIT}만원 · 최대 {RENTAL_FEE_MAX}만원까지 기록 가능
+              </p>
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700 flex justify-between">
                 <span>식대 (1인)</span>
-                <span className="text-rose-500">{hall.halls[selectedHallIndex].mealFee ? `${hall.halls[selectedHallIndex].mealFee} 만원` : '입력 안됨'}</span>
+                <div className="flex items-center gap-2">
+                  <span className={isMealFeeOverBudget ? 'text-amber-500' : 'text-rose-500'}>
+                    {mealFee ? `${mealFee} 만원` : '입력 안됨'}
+                  </span>
+                  {isMealFeeOverBudget && (
+                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+                      예산 초과
+                    </span>
+                  )}
+                </div>
               </label>
               <input 
-                type="range" min="0" max="7.5" step="0.1"
-                className="w-full accent-rose-400"
-                value={hall.halls[selectedHallIndex].mealFee || 0} 
+                type="range" min="0" max={MEAL_FEE_MAX} step="0.1"
+                className={`w-full ${isMealFeeOverBudget ? 'accent-amber-500' : 'accent-rose-400'}`}
+                value={mealFee}
                 onChange={(e) => handleHallChange('mealFee', Number(e.target.value))} 
               />
               <div className="flex justify-between text-xs text-slate-400">
-                <span>0</span><span>7.5</span>
+                <span>0</span><span>{MEAL_FEE_MAX}</span>
               </div>
+              <p className={`text-[11px] font-medium ${isMealFeeOverBudget ? 'text-amber-600' : 'text-slate-400'}`}>
+                예산 기준 {MEAL_FEE_BUDGET_LIMIT}만원 · 최대 {MEAL_FEE_MAX}만원까지 기록 가능
+              </p>
             </div>
 
             <div className="space-y-2">

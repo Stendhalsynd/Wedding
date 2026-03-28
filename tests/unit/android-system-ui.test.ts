@@ -16,6 +16,7 @@ test('S3-7 adds the Capacitor status-bar dependency and config', () => {
   assert.match(capacitorConfig, /StatusBar/);
   assert.match(capacitorConfig, /overlaysWebView:\s*false/);
   assert.match(capacitorConfig, /backgroundColor/);
+  assert.match(capacitorConfig, /style:\s*'DARK'/);
 });
 
 test('S3-7 initializes Android system UI from the app shell', () => {
@@ -27,15 +28,22 @@ test('S3-7 initializes Android system UI from the app shell', () => {
   assert.match(systemUiSource, /setStyle/);
   assert.match(systemUiSource, /setBackgroundColor/);
   assert.match(systemUiSource, /Capacitor\.getPlatform\(\).*'android'/);
+  assert.match(systemUiSource, /Style\.Dark/);
 });
 
-test('S3-7 configures Android theme for readable status bar content', () => {
+test('S3-10 configures Android theme for a light status bar with dark icons', () => {
   const stylesXml = readFileSync(
     path.join(rootDir, 'android', 'app', 'src', 'main', 'res', 'values', 'styles.xml'),
+    'utf8',
+  );
+  const colorsXml = readFileSync(
+    path.join(rootDir, 'android', 'app', 'src', 'main', 'res', 'values', 'colors.xml'),
     'utf8',
   );
 
   assert.match(stylesXml, /windowLightStatusBar/);
   assert.match(stylesXml, /statusBarColor/);
   assert.match(stylesXml, /windowOptOutEdgeToEdgeEnforcement/);
+  assert.match(stylesXml, /windowLightStatusBar">true</);
+  assert.match(colorsXml, /statusBarBackground">#F8FAFC</);
 });

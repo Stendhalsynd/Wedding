@@ -19,8 +19,8 @@ const config: WeddingCapacitorConfig = {
     },
     StatusBar: {
       overlaysWebView: false,
-      style: 'LIGHT',
-      backgroundColor: '#0f172a',
+      style: 'DARK',
+      backgroundColor: '#f8fafc',
     },
   },
 };

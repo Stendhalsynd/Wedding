@@ -113,10 +113,12 @@ export default function CompareView() {
   ];
 
   return (
-    <div className="min-h-full flex flex-col bg-slate-50">
-      <div className="sticky top-0 z-20 shrink-0 border-b border-white/40 bg-slate-50/95 px-6 pb-4 pt-safe-top backdrop-blur-md">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-800">웨딩홀 비교</h1>
-        <p className="text-sm text-slate-500 mt-1">한눈에 보는 우리의 웨딩홀 후보</p>
+    <div className="min-h-full flex flex-col bg-slate-50 pt-fixed-page-header">
+      <div className="fixed inset-x-0 top-0 z-20">
+        <div className="mx-auto max-w-md border-b border-white/40 bg-slate-50/95 px-6 pb-4 pt-safe-top backdrop-blur-md">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-800">웨딩홀 비교</h1>
+          <p className="mt-1 text-sm text-slate-500">한눈에 보는 우리의 웨딩홀 후보</p>
+        </div>
       </div>
 
       {/* Filter */}
