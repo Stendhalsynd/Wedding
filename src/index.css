@@ -9,6 +9,20 @@
 }
 
 @layer utilities {
+  .min-h-app-screen {
+    min-height: 100vh;
+    min-height: 100svh;
+    min-height: 100dvh;
+  }
+
+  .pb-safe-bottom {
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 0.75rem);
+  }
+
+  .pb-safe-nav {
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px));
+  }
+
   .clay-card {
     background-color: #f8fafc;
     border-radius: 1.5rem;

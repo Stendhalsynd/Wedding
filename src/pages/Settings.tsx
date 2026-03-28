@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { logOut, auth, db } from '../firebase';
+import { auth, db } from '../firebase';
 import { deleteField, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { User, LogOut, Link as LinkIcon, ChevronRight } from 'lucide-react';
 import { DEFAULT_PROFILE_IMAGES } from '../constants/profileImages';
 import { getResolvedProfileImageUrl } from '../utils/profileRules';
+import { signOutEverywhere } from '../services/auth';
 
 export default function SettingsView({ isConnected }: { isConnected: boolean }) {
   const navigate = useNavigate();
@@ -135,7 +136,7 @@ export default function SettingsView({ isConnected }: { isConnected: boolean }) 
 
         <div className="clay-card p-2">
           <button 
-            onClick={logOut}
+            onClick={signOutEverywhere}
             className="w-full p-4 flex items-center gap-4 text-rose-500 font-bold hover:bg-rose-50 rounded-2xl transition-colors"
           >
             <div className="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center">

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { User } from 'firebase/auth';
 import { doc, getDoc, updateDoc, collection, query, where, getDocs, writeBatch, serverTimestamp } from 'firebase/firestore';
-import { db, logOut } from '../firebase';
+import { db } from '../firebase';
+import { signOutEverywhere } from '../services/auth';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Copy, Check, Link as LinkIcon } from 'lucide-react';
 
@@ -159,7 +160,7 @@ export default function ConnectCouple({ user }: { user: User }) {
             {loading ? '연결 중...' : '연결하기'}
           </button>
           <button 
-            onClick={logOut} 
+            onClick={signOutEverywhere}
             className="w-full py-4 clay-btn text-slate-500 font-bold active:scale-95 transition-all"
           >
             로그아웃

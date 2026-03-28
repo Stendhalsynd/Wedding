@@ -6,15 +6,28 @@
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",
+    "generate:icons": "python3 scripts/generate-app-icons.py",
+    "secrets:check": "node scripts/check-no-public-secrets.mjs",
+    "setup:hooks": "git config core.hooksPath .githooks",
+    "android:build:web": "vite build",
+    "android:sync": "npx cap sync android",
+    "android:open": "npx cap open android",
+    "android:run": "npx cap run android",
+    "android:prepare": "npm run build && npx cap sync android",
+    "android:build:release": "bash scripts/release-android-build.sh",
     "preview": "vite preview",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
     "test": "tsx --test src/**/*.test.ts tests/**/*.test.ts",
     "release:notes": "node scripts/generate-release-notes.mjs",
+    "release:android:build": "bash scripts/release-android-build.sh",
     "release:apk:github": "bash scripts/release-apk.sh",
     "release:discord": "bash scripts/release-discord.sh"
   },
   "dependencies": {
+    "@capacitor-firebase/authentication": "^7.5.0",
+    "@capacitor/android": "^7.6.1",
+    "@capacitor/core": "^7.6.1",
     "@google/genai": "^1.29.0",
     "@google/model-viewer": "^4.2.0",
     "@radix-ui/react-dialog": "^1.1.15",
@@ -44,6 +57,7 @@
     "vite": "^6.2.0"
   },
   "devDependencies": {
+    "@capacitor/cli": "^7.6.1",
     "@types/express": "^4.17.21",
     "@types/node": "^22.14.0",
     "autoprefixer": "^10.4.21",

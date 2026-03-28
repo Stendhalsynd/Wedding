@@ -42,7 +42,10 @@ VITE_FIREBASE_PROJECT_ID=...
 VITE_FIREBASE_STORAGE_BUCKET=...
 VITE_FIREBASE_MESSAGING_SENDER_ID=...
 VITE_FIREBASE_APP_ID=...
+VITE_FIREBASE_FIRESTORE_DATABASE_ID=...
 ```
+
+실제 Firebase 설정 JSON이나 API 키가 들어간 파일은 저장소에 커밋하지 않습니다.
 
 ### 3. 개발 서버 실행
 
@@ -51,6 +54,18 @@ npm run dev
 ```
 
 기본 개발 주소는 `http://localhost:3000` 입니다.
+
+### 4. 푸시 전 비밀값 검사 훅 연결
+
+```bash
+npm run setup:hooks
+```
+
+이후 `git push` 전에 `npm run secrets:check`가 자동 실행됩니다. 현재 규칙은 다음을 차단합니다.
+
+- `firebase-applet-config.json` 같은 tracked Firebase 설정 JSON
+- Google API key 패턴 `AIza...`
+- tracked 된 `.env` 파일
 
 ## Firebase Authentication 설정
 
@@ -63,7 +78,7 @@ Google 로그인을 사용하므로 Firebase Console의 `Authentication > Settin
 
 배포 시 예시:
 
-- `wedding-kappa-ochre.vercel.app`
+- `wedding-jwjh.vercel.app`
 
 도메인은 프로토콜 없이 입력합니다.
 
@@ -79,21 +94,22 @@ npx vercel deploy --prod --yes
 
 현재 운영 배포 URL:
 
-- [https://wedding-kappa-ochre.vercel.app](https://wedding-kappa-ochre.vercel.app)
+- [https://wedding-jwjh.vercel.app](https://wedding-jwjh.vercel.app)
 
 ## 릴리스 및 APK 관련 메모
 
-저장소에는 GitHub Release 업로드 스크립트가 포함되어 있습니다.
+저장소에는 Android 패키징 구조와 GitHub Release 업로드 스크립트가 포함되어 있습니다.
 
 - [generate-release-notes.mjs](/Users/jihun/StudioProjects/Wedding/scripts/generate-release-notes.mjs)
 - [release-apk.sh](/Users/jihun/StudioProjects/Wedding/scripts/release-apk.sh)
 - [release-discord.sh](/Users/jihun/StudioProjects/Wedding/scripts/release-discord.sh)
 
-다만 현재 이 저장소는 웹 앱이며 Android 빌드 구조가 없습니다. 따라서 이 저장소만으로 APK를 새로 빌드할 수는 없고, 이미 생성된 `release` APK 파일이 있을 때만 GitHub Release 업로드 자동화를 사용할 수 있습니다.
+다만 실제 signed release APK 생성은 keystore 설정 검증이 아직 남아 있습니다. 따라서 현재는 Android 구조와 빌드 스크립트는 준비되어 있지만, 실제 배포용 APK 산출은 서명 검증이 끝난 뒤 진행해야 합니다.
 
 ## 검증 명령
 
 ```bash
+npm run secrets:check
 npm test
 npm run lint
 npm run build
