@@ -1,0 +1,153 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A user of the app, typically one half of a couple.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The user's unique ID."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "The user's email address."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The user's display name."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["bride", "groom"],
+          "description": "The user's role in the wedding planning (bride or groom)."
+        },
+        "profileImageUrl": {
+          "type": "string",
+          "description": "The URL of the user's AI-generated profile image."
+        },
+        "coupleId": {
+          "type": "string",
+          "description": "The ID of the couple this user belongs to. Null if not yet paired."
+        }
+      },
+      "required": ["uid", "email"]
+    },
+    "Couple": {
+      "title": "Couple",
+      "description": "A pair of users planning their wedding together.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The couple's unique ID."
+        },
+        "user1Uid": {
+          "type": "string",
+          "description": "The UID of the first user."
+        },
+        "user2Uid": {
+          "type": "string",
+          "description": "The UID of the second user."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the couple was formed."
+        }
+      },
+      "required": ["id", "user1Uid", "createdAt"]
+    },
+    "WeddingHall": {
+      "title": "WeddingHall",
+      "description": "A wedding hall visited or planned to be visited.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique ID of the wedding hall record."
+        },
+        "coupleId": {
+          "type": "string",
+          "description": "The ID of the couple this record belongs to."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the wedding hall."
+        },
+        "location": {
+          "type": "string",
+          "description": "The address or location of the hall."
+        },
+        "visitDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date and time of the tour."
+        },
+        "status": {
+          "type": "string",
+          "description": "The status of the tour (planned, visited, contracted)."
+        },
+        "halls": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "time": { "type": "string" },
+              "rentalFee": { "type": "number" },
+              "mealFee": { "type": "number" },
+              "guaranteedGuests": { "type": "number" }
+            }
+          },
+          "description": "List of specific halls within this wedding hall."
+        },
+        "selectedHallIndex": {
+          "type": "number",
+          "description": "The index of the hall currently selected for display/comparison."
+        },
+        "mealScore": { "type": "number" },
+        "parkingScore": { "type": "number" },
+        "atmosphereScore": { "type": "number" },
+        "trafficScore": { "type": "number" },
+        "brideRoomScore": { "type": "number" },
+        "virginRoadScore": { "type": "number" },
+        "ceilingHeightScore": { "type": "number" },
+        "restroomScore": { "type": "number" },
+        "flowScore": { "type": "number" },
+        "notes": {
+          "type": "string",
+          "description": "General notes and review."
+        },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the record was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the record was last updated."
+        }
+      },
+      "required": ["id", "coupleId", "name", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "Stores user profiles."
+    },
+    "couples/{coupleId}": {
+      "schema": "Couple",
+      "description": "Stores couple pairings."
+    },
+    "weddingHalls/{hallId}": {
+      "schema": "WeddingHall",
+      "description": "Stores wedding hall tour records."
+    }
+  }
+}

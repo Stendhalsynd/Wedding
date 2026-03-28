@@ -1,0 +1,61 @@
+@import "tailwindcss";
+@import url('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
+@import url('https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css');
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer utilities {
+  .clay-card {
+    background-color: #f8fafc;
+    border-radius: 1.5rem;
+    box-shadow: 
+      8px 8px 16px rgba(0, 0, 0, 0.05), 
+      -8px -8px 16px rgba(255, 255, 255, 0.8), 
+      inset 2px 2px 4px rgba(255, 255, 255, 0.5), 
+      inset -2px -2px 4px rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+  }
+
+  .clay-btn {
+    background-color: #f8fafc;
+    border-radius: 1rem;
+    box-shadow: 
+      4px 4px 8px rgba(0, 0, 0, 0.05), 
+      -4px -4px 8px rgba(255, 255, 255, 0.8);
+    transition: all 0.2s ease-in-out;
+  }
+
+  .clay-btn:active, .clay-btn-active {
+    box-shadow: 
+      inset 4px 4px 8px rgba(0, 0, 0, 0.05), 
+      inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+  }
+
+  .clay-input {
+    background-color: #f1f5f9;
+    border-radius: 1rem;
+    box-shadow: 
+      inset 4px 4px 8px rgba(0, 0, 0, 0.04), 
+      inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+    border: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar, .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar, .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@layer base {
+  body {
+    background-color: #f8fafc;
+    color: #1e293b;
+  }
+}
