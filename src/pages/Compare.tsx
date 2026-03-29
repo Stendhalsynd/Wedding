@@ -7,6 +7,30 @@ import { useNavigate } from 'react-router-dom';
 type SortKey = 'status' | 'rentalFee' | 'mealFee' | 'mealScore' | 'parkingScore' | 'atmosphereScore' | 'trafficScore' | 'brideRoomScore' | 'virginRoadScore' | 'ceilingHeightScore' | 'restroomScore' | 'flowScore';
 type SortOrder = 'asc' | 'desc' | null;
 
+function getSelectedHallData(hall: any) {
+  if (hall.halls && hall.halls.length > 0) {
+    return hall.halls[hall.selectedHallIndex || 0];
+  }
+
+  return {
+    name: hall.subHallName || '홀 미지정',
+    time: hall.weddingTime || '시간 미정',
+    rentalFee: hall.rentalFee,
+    mealFee: hall.mealFee,
+    guaranteedGuests: hall.guaranteedGuests,
+  };
+}
+
+function getComparableValue(hall: any, key: SortKey) {
+  const selectedHall = getSelectedHallData(hall);
+
+  if (key === 'rentalFee' || key === 'mealFee') {
+    return selectedHall[key] ?? 0;
+  }
+
+  return hall[key] ?? 0;
+}
+
 export default function CompareView() {
   const [halls, setHalls] = useState<any[]>([]);
   const [sortBy, setSortBy] = useState<SortKey | null>(null);
@@ -32,6 +56,9 @@ export default function CompareView() {
   }, [user]);
 
   const handleSort = (key: SortKey) => {
+    if (key === 'status') {
+      return;
+    }
     if (sortBy === key) {
       if (sortOrder === 'asc') setSortOrder('desc');
       else if (sortOrder === 'desc') {
@@ -53,8 +80,8 @@ export default function CompareView() {
 
     if (sortBy && sortOrder) {
       result.sort((a, b) => {
-        let valA = a[sortBy];
-        let valB = b[sortBy];
+        let valA = getComparableValue(a, sortBy);
+        let valB = getComparableValue(b, sortBy);
 
         if (sortBy === 'status') {
           const statusOrder: Record<string, number> = { planned: 1, visited: 2, contracted: 3 };
@@ -98,7 +125,7 @@ export default function CompareView() {
   };
 
   const rows = [
-    { key: 'status', label: '상태', sortable: true },
+    { key: 'status', label: '상태', sortable: false },
     { key: 'rentalFee', label: '대관료', sortable: true },
     { key: 'mealFee', label: '식대', sortable: true },
     { key: 'mealScore', label: '식사', sortable: true },
@@ -168,9 +195,7 @@ export default function CompareView() {
 
             {/* Hall Columns */}
             {displayHalls.map(hall => {
-              const selectedHall = hall.halls && hall.halls.length > 0 
-                ? hall.halls[hall.selectedHallIndex || 0] 
-                : { name: hall.subHallName || '홀 미지정', time: hall.weddingTime || '시간 미정', rentalFee: hall.rentalFee, mealFee: hall.mealFee, guaranteedGuests: hall.guaranteedGuests };
+              const selectedHall = getSelectedHallData(hall);
 
               return (
                 <div key={hall.id} className="flex flex-col w-40 shrink-0">

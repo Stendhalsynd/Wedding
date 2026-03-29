@@ -84,7 +84,11 @@ export default function ConnectCouple({ user }: { user: User }) {
 
     } catch (err) {
       console.error(err);
-      setError('연결 중 오류가 발생했습니다.');
+      if (typeof err === 'object' && err && 'code' in err && err.code === 'permission-denied') {
+        setError('연결 권한이 거부되었습니다. 앱을 최신 버전으로 업데이트한 뒤 다시 시도해주세요.');
+      } else {
+        setError('연결 중 오류가 발생했습니다.');
+      }
     } finally {
       setLoading(false);
     }

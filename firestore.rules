@@ -77,7 +77,16 @@ service cloud.firestore {
     }
 
     function isConnectingCouple(oldCoupleId, newCoupleId) {
-      return newCoupleId == request.auth.uid + '_' + oldCoupleId || newCoupleId == oldCoupleId + '_' + request.auth.uid;
+      return newCoupleId == request.auth.uid + '_' + oldCoupleId ||
+             newCoupleId == oldCoupleId + '_' + request.auth.uid ||
+             (
+               oldCoupleId == request.auth.uid &&
+               existsAfter(/databases/$(database)/documents/couples/$(newCoupleId)) &&
+               (
+                 getAfter(/databases/$(database)/documents/couples/$(newCoupleId)).data.user1Uid == request.auth.uid ||
+                 getAfter(/databases/$(database)/documents/couples/$(newCoupleId)).data.user2Uid == request.auth.uid
+               )
+             );
     }
 
     match /users/{userId} {
