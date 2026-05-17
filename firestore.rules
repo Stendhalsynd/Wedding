@@ -67,6 +67,77 @@ service cloud.firestore {
              (!('createdAt' in data) || data.createdAt is timestamp) &&
              (!('updatedAt' in data) || data.updatedAt is timestamp);
     }
+
+    function isValidPlanningRecord(data) {
+      return hasOnlyAllowedFields([
+               'id',
+               'coupleId',
+               'authorId',
+               'sourceSeedId',
+               'sortOrder',
+               'seedVersion',
+               'group',
+               'item',
+               'planned',
+               'actual',
+               'due',
+               'owner',
+               'status',
+               'title',
+               'decision',
+               'target',
+               'marketRange',
+               'sourceHint',
+               'options',
+               'name',
+               'year',
+               'households',
+               'size',
+               'price',
+               'verdict',
+               'risk',
+               'reason',
+               'action',
+               'date',
+               'type',
+               'detail',
+               'createdAt',
+               'updatedAt'
+             ]) &&
+             data.id is string && data.id.size() > 0 && data.id.size() < 160 &&
+             data.coupleId is string && data.coupleId.size() > 0 && data.coupleId.size() < 160 &&
+             data.authorId is string && data.authorId.size() > 0 && data.authorId.size() < 100 &&
+             (!('sourceSeedId' in data) || data.sourceSeedId is string) &&
+             (!('sortOrder' in data) || data.sortOrder is number) &&
+             (!('seedVersion' in data) || data.seedVersion is string) &&
+             (!('group' in data) || data.group is string) &&
+             (!('item' in data) || data.item is string) &&
+             (!('planned' in data) || data.planned is number) &&
+             (!('actual' in data) || data.actual is number) &&
+             (!('due' in data) || data.due is string) &&
+             (!('owner' in data) || data.owner is string) &&
+             (!('status' in data) || data.status is string) &&
+             (!('title' in data) || data.title is string) &&
+             (!('decision' in data) || data.decision is string) &&
+             (!('target' in data) || data.target is string) &&
+             (!('marketRange' in data) || data.marketRange is string) &&
+             (!('sourceHint' in data) || data.sourceHint is string) &&
+             (!('options' in data) || data.options is list) &&
+             (!('name' in data) || data.name is string) &&
+             (!('year' in data) || data.year is string) &&
+             (!('households' in data) || data.households is number) &&
+             (!('size' in data) || data.size is string) &&
+             (!('price' in data) || data.price is string) &&
+             (!('verdict' in data) || data.verdict is string) &&
+             (!('risk' in data) || data.risk is string) &&
+             (!('reason' in data) || data.reason is string) &&
+             (!('action' in data) || data.action is string) &&
+             (!('date' in data) || data.date is string) &&
+             (!('type' in data) || data.type is string) &&
+             (!('detail' in data) || data.detail is string) &&
+             (!('createdAt' in data) || data.createdAt is timestamp) &&
+             (!('updatedAt' in data) || data.updatedAt is timestamp);
+    }
     
     // Check if the user is part of the couple or if coupleId is their own uid
     function isPartOfCouple(coupleId) {
@@ -105,9 +176,75 @@ service cloud.firestore {
     }
     
     match /weddingHalls/{hallId} {
-      allow read: if isAuthenticated() && (isPartOfCouple(resource.data.coupleId) || resource.data.coupleId != null);
+      allow read: if isAuthenticated() && isPartOfCouple(resource.data.coupleId);
       allow create: if isAuthenticated() && isValidWeddingHall(request.resource.data) && request.resource.data.id == hallId && isPartOfCouple(request.resource.data.coupleId);
       allow update: if isAuthenticated() && isValidWeddingHall(request.resource.data) && request.resource.data.id == resource.data.id && 
+                    (
+                      (isPartOfCouple(resource.data.coupleId) && isPartOfCouple(request.resource.data.coupleId)) ||
+                      isConnectingCouple(resource.data.coupleId, request.resource.data.coupleId)
+                    );
+      allow delete: if isAuthenticated() && isPartOfCouple(resource.data.coupleId);
+    }
+
+    match /planningBudgetRows/{planningId} {
+      allow read: if isAuthenticated() && isPartOfCouple(resource.data.coupleId);
+      allow create: if isAuthenticated() && isValidPlanningRecord(request.resource.data) && request.resource.data.id == planningId && isPartOfCouple(request.resource.data.coupleId);
+      allow update: if isAuthenticated() && isValidPlanningRecord(request.resource.data) && request.resource.data.id == resource.data.id &&
+                    (
+                      (isPartOfCouple(resource.data.coupleId) && isPartOfCouple(request.resource.data.coupleId)) ||
+                      isConnectingCouple(resource.data.coupleId, request.resource.data.coupleId)
+                    );
+      allow delete: if isAuthenticated() && isPartOfCouple(resource.data.coupleId);
+    }
+
+    match /planningVendors/{planningId} {
+      allow read: if isAuthenticated() && isPartOfCouple(resource.data.coupleId);
+      allow create: if isAuthenticated() && isValidPlanningRecord(request.resource.data) && request.resource.data.id == planningId && isPartOfCouple(request.resource.data.coupleId);
+      allow update: if isAuthenticated() && isValidPlanningRecord(request.resource.data) && request.resource.data.id == resource.data.id &&
+                    (
+                      (isPartOfCouple(resource.data.coupleId) && isPartOfCouple(request.resource.data.coupleId)) ||
+                      isConnectingCouple(resource.data.coupleId, request.resource.data.coupleId)
+                    );
+      allow delete: if isAuthenticated() && isPartOfCouple(resource.data.coupleId);
+    }
+
+    match /planningApartments/{planningId} {
+      allow read: if isAuthenticated() && isPartOfCouple(resource.data.coupleId);
+      allow create: if isAuthenticated() && isValidPlanningRecord(request.resource.data) && request.resource.data.id == planningId && isPartOfCouple(request.resource.data.coupleId);
+      allow update: if isAuthenticated() && isValidPlanningRecord(request.resource.data) && request.resource.data.id == resource.data.id &&
+                    (
+                      (isPartOfCouple(resource.data.coupleId) && isPartOfCouple(request.resource.data.coupleId)) ||
+                      isConnectingCouple(resource.data.coupleId, request.resource.data.coupleId)
+                    );
+      allow delete: if isAuthenticated() && isPartOfCouple(resource.data.coupleId);
+    }
+
+    match /planningPolicies/{planningId} {
+      allow read: if isAuthenticated() && isPartOfCouple(resource.data.coupleId);
+      allow create: if isAuthenticated() && isValidPlanningRecord(request.resource.data) && request.resource.data.id == planningId && isPartOfCouple(request.resource.data.coupleId);
+      allow update: if isAuthenticated() && isValidPlanningRecord(request.resource.data) && request.resource.data.id == resource.data.id &&
+                    (
+                      (isPartOfCouple(resource.data.coupleId) && isPartOfCouple(request.resource.data.coupleId)) ||
+                      isConnectingCouple(resource.data.coupleId, request.resource.data.coupleId)
+                    );
+      allow delete: if isAuthenticated() && isPartOfCouple(resource.data.coupleId);
+    }
+
+    match /planningTimeline/{planningId} {
+      allow read: if isAuthenticated() && isPartOfCouple(resource.data.coupleId);
+      allow create: if isAuthenticated() && isValidPlanningRecord(request.resource.data) && request.resource.data.id == planningId && isPartOfCouple(request.resource.data.coupleId);
+      allow update: if isAuthenticated() && isValidPlanningRecord(request.resource.data) && request.resource.data.id == resource.data.id &&
+                    (
+                      (isPartOfCouple(resource.data.coupleId) && isPartOfCouple(request.resource.data.coupleId)) ||
+                      isConnectingCouple(resource.data.coupleId, request.resource.data.coupleId)
+                    );
+      allow delete: if isAuthenticated() && isPartOfCouple(resource.data.coupleId);
+    }
+
+    match /planningMetadata/{planningId} {
+      allow read: if isAuthenticated() && isPartOfCouple(resource.data.coupleId);
+      allow create: if isAuthenticated() && isValidPlanningRecord(request.resource.data) && request.resource.data.id == planningId && isPartOfCouple(request.resource.data.coupleId);
+      allow update: if isAuthenticated() && isValidPlanningRecord(request.resource.data) && request.resource.data.id == resource.data.id &&
                     (
                       (isPartOfCouple(resource.data.coupleId) && isPartOfCouple(request.resource.data.coupleId)) ||
                       isConnectingCouple(resource.data.coupleId, request.resource.data.coupleId)

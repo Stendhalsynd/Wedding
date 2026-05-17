@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { User } from 'firebase/auth';
-import { doc, getDoc, updateDoc, collection, query, where, getDocs, writeBatch, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs, writeBatch, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { signOutEverywhere } from '../services/auth';
+import { migratePlanningDocuments } from '../services/planningFirestore';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Copy, Check, Link as LinkIcon } from 'lucide-react';
 
@@ -77,6 +78,8 @@ export default function ConnectCouple({ user }: { user: User }) {
       partnerHallsSnap.forEach(docSnap => {
         batch.update(docSnap.ref, { coupleId });
       });
+
+      await migratePlanningDocuments(batch, [user.uid, partnerData.uid], coupleId);
 
       await batch.commit();
       

@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Home, Map as MapIcon, BarChart2, Settings } from 'lucide-react';
+import { Home, Map as MapIcon, BarChart2, Settings, ClipboardList } from 'lucide-react';
 
 export default function MobileLayout() {
   const navigate = useNavigate();
@@ -9,6 +9,7 @@ export default function MobileLayout() {
     { path: '/', icon: Home, label: '투어' },
     { path: '/map', icon: MapIcon, label: '지도' },
     { path: '/compare', icon: BarChart2, label: '비교' },
+    { path: '/planning', icon: ClipboardList, label: '관리' },
     { path: '/settings', icon: Settings, label: '설정' },
   ];
 

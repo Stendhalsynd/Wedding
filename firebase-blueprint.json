@@ -134,6 +134,30 @@
         }
       },
       "required": ["id", "coupleId", "name", "createdAt", "updatedAt"]
+    },
+    "PlanningRecord": {
+      "title": "PlanningRecord",
+      "description": "A couple-scoped planning document for budget, vendor, housing, policy, or timeline data.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "coupleId": {
+          "type": "string",
+          "description": "The solo user UID or connected couple ID that owns this record."
+        },
+        "authorId": {
+          "type": "string",
+          "description": "The UID that initialized or last owned this seed record."
+        },
+        "sourceSeedId": {
+          "type": "string",
+          "description": "Stable seed key used to deduplicate solo records during couple connection."
+        },
+        "sortOrder": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "coupleId", "authorId"]
     }
   },
   "firestore": {
@@ -148,6 +172,30 @@
     "weddingHalls/{hallId}": {
       "schema": "WeddingHall",
       "description": "Stores wedding hall tour records."
+    },
+    "planningBudgetRows/{rowId}": {
+      "schema": "PlanningRecord",
+      "description": "Stores couple-scoped wedding budget rows."
+    },
+    "planningVendors/{vendorId}": {
+      "schema": "PlanningRecord",
+      "description": "Stores couple-scoped vendor research categories and options."
+    },
+    "planningApartments/{apartmentId}": {
+      "schema": "PlanningRecord",
+      "description": "Stores couple-scoped housing candidates."
+    },
+    "planningPolicies/{policyId}": {
+      "schema": "PlanningRecord",
+      "description": "Stores couple-scoped policy eligibility checks."
+    },
+    "planningTimeline/{timelineId}": {
+      "schema": "PlanningRecord",
+      "description": "Stores couple-scoped preparation timeline items."
+    },
+    "planningMetadata/{metadataId}": {
+      "schema": "PlanningRecord",
+      "description": "Stores seed initialization metadata for a solo user or couple space."
     }
   }
 }

@@ -11,6 +11,7 @@ import ProfileSetup from './pages/ProfileSetup';
 import Dashboard from './pages/Dashboard';
 import ConnectCouple from './pages/ConnectCouple';
 import HallDetail from './pages/HallDetail';
+import PlanningDashboard from './pages/PlanningDashboard';
 import VirtualPreview from './pages/VirtualPreview';
 import MapView from './pages/Map';
 import CompareView from './pages/Compare';
@@ -165,6 +166,14 @@ export default function App() {
                 needsRoleSetup ? <Navigate to="/profile-setup" replace /> :
                 <CompareView />
               } 
+            />
+            <Route
+              path="/planning"
+              element={
+                !user ? <Navigate to="/splash" replace /> :
+                needsRoleSetup ? <Navigate to="/profile-setup" replace /> :
+                <PlanningDashboard user={user} coupleId={coupleId || user.uid} isConnected={!!coupleId} />
+              }
             />
             <Route 
               path="/settings" 
